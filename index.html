@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, height=11in, initial-scale=1.0">
+  <title>Trig Speed Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    #container {
+      margin-top: 50px;
+    }
+    #problems {
+      font-size: 20px;
+    }
+    #answer {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    #answer button {
+      margin: 5px;
+      padding: 5px 10px;
+      font-size: 16px;
+    }
+    #result {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+    #timer {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+    #submitScore {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>Trig Speed Test</h1>
+    <label for="numOfProblems">Number of Problems:</label>
+    <input type="number" id="numOfProblems" min="1" value="10">
+    <br><br>
+    <label for="timeLimit">Time Limit (seconds):</label>
+    <input type="number" id="timeLimit" min="10" value="60">
+    <br><br>
+    <button id="startButton" onclick="startGame()">Start Game</button>
+    <div id="timer" style="display: none;">Time Left: <span id="timeLeft"></span></div>
+    <div id="problems"></div>
+    <div id="answer"></div>
+    <div id="result"></div>
+    <div id="submitScore" style="display: none;">
+      <input type="text" id="playerName" placeholder="Enter your name">
+      <button onclick="submitScore()">Submit Score</button>
+    </div>
+    <p id="refreshText" style="display: none;">Refresh the page to play again</p>
+  </div>
+
+  <script>
+    const questions = {
+      "sin0": "0",
+      "cos0": "1",
+      "tan0": "0",
+      "csc0": "undefined",
+      "sec0": "1",
+      "cot0": "undefined",
+      "sin30": "1/2",
+      "cos30": "√3/2",
+      "tan30": "√3/3",
+      "csc30": "2",
+      "sec30": "2√3/3",
+      "cot30": "√3",
+      "sin45": "√2/2",
+      "cos45": "√2/2",
+      "tan45": "1",
+      "csc45": "√2",
+      "sec45": "√2",
+      "cot45": "1",
+      "sin60": "√3/2",
+      "cos60": "1/2",
+      "tan60": "√3",
+      "csc60": "2√3/3",
+      "sec60": "2",
+      "cot60": "√3/3",
+      "sin90": "1",
+      "cos90": "0",
+      "tan90": "undefined",
+      "csc90": "1",
+      "sec90": "undefined",
+      "cot90": "0",
+      "sin120": "√3/2",
+      "cos120": "-1/2",
+      "tan120": "-√3",
+      "csc120": "2√3/3",
+      "sec120": "-2",
+      "cot120": "-√3/3",
+      "sin135": "√2/2",
+      "cos135": "-√2/2",
+      "tan135": "-1",
+      "csc135": "√2",
+      "sec135": "-√2",
+      "cot135": "-1",
+      "sin150": "1/2",
+      "cos150": "-√3/2",
+      "tan150": "-√3/3",
+      "csc150": "2",
+      "sec150": "-2√3/3",
+      "cot150": "-√3",
+      "sin180": "0",
+      "cos180": "-1",
+      "tan180": "0",
+      "csc180": "undefined",
+      "sec180": "-1",
+      "cot180": "undefined",
+      "sin210": "-1/2",
+      "cos210": "-√3/2",
+      "tan210": "√3/3",
+      "csc210": "-2",
+      "sec210": "-2√3/3",
+      "cot210": "√3",
+      "sin225": "-√2/2",
+      "cos225": "-√2/2",
+      "tan225": "1",
+      "csc225": "-√2",
+      "sec225": "-√2",
+      "cot225": "1",
+      "sin240": "-√3/2",
+      "cos240": "-1/2",
+      "tan240": "√3",
+      "csc240": "-2√3/3",
+      "sec240": "-2",
+      "cot240": "√3/3",
+      "sin270": "-1",
+      "cos270": "0",
+      "tan270": "undefined",
+      "csc270": "-1",
+      "sec270": "undefined",
+      "cot270": "0",
+      "sin300": "-√3/2",
+      "cos300": "1/2",
+      "tan300": "-√3",
+      "csc300": "-2√3/3",
+      "sec300": "2",
+      "cot300": "-√3/3",
+      "sin315": "-√2/2",
+      "cos315": "√2/2",
+      "tan315": "-1",
+      "csc315": "-√2",
+      "sec315": "√2",
+      "cot315": "-1",
+      "sin330": "-1/2",
+      "cos330": "√3/2",
+      "tan330": "-√3/3",
+      "csc330": "-2",
+      "sec330": "2√3/3",
+      "cot330": "-√3",
+      "sin360": "0",
+      "cos360": "1",
+      "tan360": "0",
+      "csc360": "undefined",
+      "sec360": "1",
+      "cot360": "undefined",
+      "sin(π/6)": "1/2",
+      "cos(π/6)": "√3/2",
+      "tan(π/6)": "√3/3",
+      "csc(π/6)": "2",
+      "sec(π/6)": "2√3/3",
+      "cot(π/6)": "√3",
+      "sin(π/4)": "√2/2",
+      "cos(π/4)": "√2/2",
+      "tan(π/4)": "1",
+      "csc(π/4)": "√2",
+      "sec(π/4)": "√2",
+      "cot(π/4)": "1",
+      "sin(π/3)": "√3/2",
+      "cos(π/3)": "1/2",
+      "tan(π/3)": "√3",
+      "csc(π/3)": "2√3/3",
+      "sec(π/3)": "2",
+      "cot(π/3)": "√3/3",
+      "sin(π/2)": "1",
+      "cos(π/2)": "0",
+      "tan(π/2)": "undefined",
+      "csc(π/2)": "1",
+      "sec(π/2)": "undefined",
+      "cot(π/2)": "0",
+      "sin(2π/3)": "√3/2",
+      "cos(2π/3)": "-1/2",
+      "tan(2π/3)": "-√3",
+      "csc(2π/3)": "2√3/3",
+      "sec(2π/3)": "-2",
+      "cot(2π/3)": "-√3/3",
+      "sin(3π/4)": "√2/2",
+      "cos(3π/4)": "-√2/2",
+      "tan(3π/4)": "-1",
+      "csc(3π/4)": "√2",
+      "sec(3π/4)": "-√2",
+      "cot(3π/4)": "-1",
+      "sin(5π/6)": "1/2",
+      "cos(5π/6)": "-√3/2",
+      "tan(5π/6)": "-√3/3",
+      "csc(5π/6)": "2",
+      "sec(5π/6)": "-2√3/3",
+      "cot(5π/6)": "-√3",
+      "sin(π)": "0",
+      "cos(π)": "-1",
+      "tan(π)": "0",
+      "csc(π)": "undefined",
+      "sec(π)": "-1",
+      "cot(π)": "undefined",
+      "sin(7π/6)": "-1/2",
+      "cos(7π/6)": "-√3/2",
+      "tan(7π/6)": "√3/3",
+      "csc(7π/6)": "-2",
+      "sec(7π/6)": "-2√3/3",
+      "cot(7π/6)": "√3",
+      "sin(5π/4)": "-√2/2",
+      "cos(5π/4)": "-√2/2",
+      "tan(5π/4)": "1",
+      "csc(5π/4)": "-√2",
+      "sec(5π/4)": "-√2",
+      "cot(5π/4)": "1",
+      "sin(4π/3)": "-√3/2",
+      "cos(4π/3)": "-1/2",
+      "tan(4π/3)": "√3",
+      "csc(4π/3)": "-2√3/3",
+      "sec(4π/3)": "-2",
+      "cot(4π/3)": "-√3/3",
+      "sin(3π/2)": "-1",
+      "cos(3π/2)": "0",
+      "tan(3π/2)": "undefined",
+      "csc(3π/2)": "-1",
+      "sec(3π/2)": "undefined",
+      "cot(3π/2)": "0",
+      "sin(5π/3)": "-√3/2",
+      "cos(5π/3)": "1/2",
+      "tan(5π/3)": "-√3",
+      "csc(5π/3)": "-2√3/3",
+      "sec(5π/3)": "2",
+      "cot(5π/3)": "-√3/3",
+      "sin(7π/4)": "-√2/2",
+      "cos(7π/4)": "√2/2",
+      "tan(7π/4)": "-1",
+      "csc(7π/4)": "-√2",
+      "sec(7π/4)": "√2",
+      "cot(7π/4)": "-1",
+      "sin(11π/6)": "-1/2",
+      "cos(11π/6)": "√3/2",
+      "tan(11π/6)": "-√3/3",
+      "csc(11π/6)": "-2",
+      "sec(11π/6)": "2√3/3",
+      "cot(11π/6)": "-√3"
+    };
+
+    const answers = ['undefined', '-2', '-1', '0', '1', '2', '-1/2', '1/2', '-√2/2', '-√2', '√2', '√2/2', '-√3/3', '-√3/2', '-√3', '√3', '√3/2', '√3/3', '-2√3/3', '2√3/3']
+
+    let timeLeft;
+    let timerInterval;
+    let numOfProblems;
+    let problemsCompleted = 0;
+    let correctAnswers = 0;
+    let incorrectAnswers = [];
+
+    function getRandomProblem() {
+      const problemKeys = Object.keys(questions);
+      const randomIndex = Math.floor(Math.random() * problemKeys.length);
+      return problemKeys[randomIndex];
+    }
+
+    function startTimer(duration) {
+      timeLeft = duration;
+      updateTimerDisplay();
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft <= 0 || problemsCompleted >= numOfProblems) {
+          clearInterval(timerInterval);
+          document.getElementById("timer").innerText = "Game Over!";
+          document.getElementById("answer").style.display = "none";
+          document.getElementById("problems").style.display = "none";
+          displayScore();
+          document.getElementById("replayButton").style.display = "inline";
+          document.getElementById("refreshText").style.display = "block";
+        } else {
+          updateTimerDisplay();
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      document.getElementById("timeLeft").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    }
+
+    function checkAnswer(selectedAnswer) {
+      const problem = document.getElementById("problems").innerText;
+      const expected = questions[problem];
+      const resultDiv = document.getElementById("result");
+
+      if (selectedAnswer === expected || selectedAnswer === expected.replace("(", "").replace(")", "")) {
+        resultDiv.innerText = "Correct!";
+        problemsCompleted++;
+        correctAnswers++;
+      } else {
+        resultDiv.innerText = `Incorrect. The answer should be ${expected}.`;
+        incorrectAnswers.push(`Problem: ${problem}, Your Answer: ${selectedAnswer}, Correct Answer: ${expected}`);
+        problemsCompleted++;
+      }
+
+      if (problemsCompleted >= numOfProblems) {
+        clearInterval(timerInterval);
+        document.getElementById("timer").innerText = "Game Over!";
+        document.getElementById("problems").style.display = "none";
+        document.getElementById("answer").style.display = "none";
+        displayScore();
+        document.getElementById("replayButton").style.display = "inline";
+        document.getElementById("refreshText").style.display = "block";
+      } else {
+        loadNextProblem();
+      }
+    }
+
+    function loadNextProblem() {
+      const problemDiv = document.getElementById("problems");
+      const problem = getRandomProblem();
+      problemDiv.innerText = problem;
+
+      const answerDiv = document.getElementById("answer");
+      answerDiv.innerHTML = "";
+      answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.innerText = answer;
+        button.addEventListener("click", function () {
+          checkAnswer(answer);
+        });
+        answerDiv.appendChild(button);
+      });
+
+      document.getElementById("result").innerText = "";
+    }
+
+    function displayScore() {
+      const resultDiv = document.getElementById("result");
+      resultDiv.innerHTML = `Your score: ${correctAnswers}/${numOfProblems}<br><br>`;
+      if (incorrectAnswers.length > 0) {
+        resultDiv.innerHTML += "<strong>Incorrect Answers:</strong><br>";
+        incorrectAnswers.forEach(answer => {
+          resultDiv.innerHTML += answer + "<br>" + "<br>"
+        });
+      }
+      resultDiv.innerHTML += "<strong>Refresh to play again</strong><br>";
+      document.getElementById("submitScore").style.display = "block";
+    }
+
+    function startGame() {
+      numOfProblems = parseInt(document.getElementById("numOfProblems").value);
+      const timeLimit = parseInt(document.getElementById("timeLimit").value);
+      problemsCompleted = 0;
+      correctAnswers = 0;
+      incorrectAnswers = [];
+      document.getElementById("startButton").style.display = "none";
+      document.getElementById("timer").style.display = "block";
+      document.getElementById("answer").style.display = "flex";
+      startTimer(timeLimit);
+      loadNextProblem();
+    }
+
+    function submitScore() {
+      const playerName = document.getElementById("playerName").value;
+      if (!playerName.trim()) {
+        alert("Please enter your name.");
+        return;
+      }
+      const score = correctAnswers;
+      const time = timeLimit;
+      const data = {
+        name: playerName,
+        score: score,
+        time: parseInt(document.getElementById("timeLimit").value),
+        outof: parseInt(document.getElementById("numOfProblems").value)
+      };
+
+      const formData = new URLSearchParams();
+
+      for (const [key, value] of Object.entries(data)) {
+        formData.append(key, value);
+      }
+    
+      fetch('https://script.google.com/macros/s/AKfycbwSKdInZ9_y61rDs4q1O26678xxu-3t8zpFgvdbAR9RdUje7kXr6JBppcVx2PIFEb1QBg/exec', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          console.log('Data sent successfully');
+        } else {
+          console.error('Failed to send data');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
+</body>
+</html>
