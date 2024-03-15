@@ -67,6 +67,7 @@
       <button onclick="submitScore()">Submit Score</button>
     </div>
     <p id="submitted" style="display: none;">Score Submitted!</p>
+    <p id="failure" style="display: none;">Submission Failed. Please Try Again.</p>
   </div>
 
   <script>
@@ -379,6 +380,8 @@
     }
 
     function submitScore() {
+      document.getElementById("submitScore").style.display = "none";
+      
       const playerName = document.getElementById("playerName").value;
       if (!playerName.trim()) {
         alert("Please enter your name.");
@@ -405,10 +408,10 @@
       })
       .then(response => {
         if (response.ok) {
-          document.getElementById("submitScore").style.display = "none";
           document.getElementById("submitted").style.display = "block";
         } else {
-          console.error('Failed to send data');
+          document.getElementById("failure").style.display = "block";
+          document.getElementById("submitScore").style.display = "block";
         }
       })
       .catch(error => {
