@@ -471,6 +471,12 @@
     function startGame() {
       numOfProblems = parseInt(document.getElementById("numOfProblems").value);
       const timeLimit = parseInt(document.getElementById("timeLimit").value);
+
+      if (isNaN(numOfProblems) || isNaN(timeLimit) || timeLimit <= 0 || numOfProblems <= 0 || timeLimit % 1 !== 0 || numOfProblems % 1 !== 0) {
+        alert("Please input valid positive integers");
+        return;
+      }
+      
       problemsCompleted = 0;
       correctAnswers = 0;
       incorrectAnswers = [];
