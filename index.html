@@ -57,6 +57,9 @@
     <label for="timeLimit">Time Limit (seconds):</label>
     <input type="number" id="timeLimit" min="10" value="60">
     <br><br>
+    <label for="inverse">Include Inverses? (Csc, Sec, Cot)</label>
+    <input type="checkbox" id="inverse">
+    <br><br>
     <button id="startButton" onclick="startGame()">Start Game</button>
     <div id="timer" style="display: none;">Time Left: <span id="timeLeft"></span></div>
     <div id="problems"></div>
@@ -266,6 +269,105 @@
       "cot(11π/6)": "-√3"
     };
 
+    const noInverseQuestions = {
+      "sin0": "0",
+      "cos0": "1",
+      "tan0": "0",
+      "sin30": "1/2",
+      "cos30": "√3/2",
+      "tan30": "√3/3",
+      "sin45": "√2/2",
+      "cos45": "√2/2",
+      "tan45": "1",
+      "sin60": "√3/2",
+      "cos60": "1/2",
+      "tan60": "√3",
+      "sin90": "1",
+      "cos90": "0",
+      "tan90": "undefined",
+      "sin120": "√3/2",
+      "cos120": "-1/2",
+      "tan120": "-√3",
+      "sin135": "√2/2",
+      "cos135": "-√2/2",
+      "tan135": "-1",
+      "sin150": "1/2",
+      "cos150": "-√3/2",
+      "tan150": "-√3/3",
+      "sin180": "0",
+      "cos180": "-1",
+      "tan180": "0",
+      "sin210": "-1/2",
+      "cos210": "-√3/2",
+      "tan210": "√3/3",
+      "sin225": "-√2/2",
+      "cos225": "-√2/2",
+      "tan225": "1",
+      "sin240": "-√3/2",
+      "cos240": "-1/2",
+      "tan240": "√3",
+      "sin270": "-1",
+      "cos270": "0",
+      "tan270": "undefined",
+      "sin300": "-√3/2",
+      "cos300": "1/2",
+      "tan300": "-√3",
+      "sin315": "-√2/2",
+      "cos315": "√2/2",
+      "tan315": "-1",
+      "sin330": "-1/2",
+      "cos330": "√3/2",
+      "tan330": "-√3/3",
+      "sin360": "0",
+      "cos360": "1",
+      "tan360": "0",
+      "sin(π/6)": "1/2",
+      "cos(π/6)": "√3/2",
+      "tan(π/6)": "√3/3",
+      "sin(π/4)": "√2/2",
+      "cos(π/4)": "√2/2",
+      "tan(π/4)": "1",
+      "sin(π/3)": "√3/2",
+      "cos(π/3)": "1/2",
+      "tan(π/3)": "√3",
+      "sin(π/2)": "1",
+      "cos(π/2)": "0",
+      "tan(π/2)": "undefined",
+      "sin(2π/3)": "√3/2",
+      "cos(2π/3)": "-1/2",
+      "tan(2π/3)": "-√3",
+      "sin(3π/4)": "√2/2",
+      "cos(3π/4)": "-√2/2",
+      "tan(3π/4)": "-1",
+      "sin(5π/6)": "1/2",
+      "cos(5π/6)": "-√3/2",
+      "tan(5π/6)": "-√3/3",
+      "sin(π)": "0",
+      "cos(π)": "-1",
+      "tan(π)": "0",
+      "sin(7π/6)": "-1/2",
+      "cos(7π/6)": "-√3/2",
+      "tan(7π/6)": "√3/3",
+      "sin(5π/4)": "-√2/2",
+      "cos(5π/4)": "-√2/2",
+      "tan(5π/4)": "1",
+      "sin(4π/3)": "-√3/2",
+      "cos(4π/3)": "-1/2",
+      "tan(4π/3)": "√3",
+      "sin(3π/2)": "-1",
+      "cos(3π/2)": "0",
+      "tan(3π/2)": "undefined",
+      "sin(5π/3)": "-√3/2",
+      "cos(5π/3)": "1/2",
+      "tan(5π/3)": "-√3",
+      "sin(7π/4)": "-√2/2",
+      "cos(7π/4)": "√2/2",
+      "tan(7π/4)": "-1",
+      "sin(11π/6)": "-1/2",
+      "cos(11π/6)": "√3/2",
+      "tan(11π/6)": "-√3/3"
+    };
+
     const answers = ['undefined', '-2', '-1', '0', '1', '2', '-1/2', '1/2', '-√2/2', '-√2', '√2', '√2/2', '-√3/3', '-√3/2', '-√3', '√3', '√3/2', '√3/3', '-2√3/3', '2√3/3']
 
     let timeLeft;
@@ -276,7 +378,7 @@
     let incorrectAnswers = [];
 
     function getRandomProblem() {
-      const problemKeys = Object.keys(questions);
+      const problemKeys = document.getElementById("inverse").checked ? Object.keys(questions) : Object.keys(noInverseQuestions);
       const randomIndex = Math.floor(Math.random() * problemKeys.length);
       return problemKeys[randomIndex];
     }
